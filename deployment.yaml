@@ -16,7 +16,7 @@ spec:
       initContainers:
       - name: init-container
         image: busybox
-        command: ['sh', '-c', 'echo "<h1>Hello, World!</h1>" > /init/index.html']
+        command: ['sh', '-c', 'echo "<h1>Hello, World!!!</h1>" > /init/index.html']
         volumeMounts:
         - name: hw-volume
           mountPath: /init
