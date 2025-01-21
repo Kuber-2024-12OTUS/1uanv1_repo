@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hw-deployment
+  namespace: homework
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: homework
+  template:
+    metadata:
+      labels:
+        app: homework
+    spec:
+      initContainers:
+      - name: init-container
+        image: busybox
+        command: ['sh', '-c', 'echo "<h1>Hello, World!</h1>" > /init/index.html']
+        volumeMounts:
+        - name: hw-volume
+          mountPath: /init
+      containers:
+      - name: web-server
+        image: nginx:latest
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: hw-volume
+          mountPath: /homework
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "-c", "rm -f /homework/index.html"]
+        readinessProbe:
+          exec:
+            command: ["cat", "/homework/index.html"]
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: hw-volume
+        emptyDir: {}
+      nodeSelector:
+        homework: "true"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
