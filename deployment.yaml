@@ -41,4 +41,3 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-
