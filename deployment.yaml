@@ -16,7 +16,7 @@ spec:
       initContainers:
       - name: init-container
         image: busybox
-        command: ['sh', '-c', 'mkdir -p /init/conf && echo "<h1>Hello, World!</h1>" > /init/conf/file.html']
+        command: ['sh', '-c', 'echo "<h1>Hello, World!</h1>" > /init/index.html']
         volumeMounts:
         - name: hw-volume
           mountPath: /init
@@ -28,25 +28,19 @@ spec:
         volumeMounts:
         - name: hw-volume
           mountPath: /usr/share/nginx/html
-        - name: config-volume
-          mountPath: /homework/conf  
         lifecycle:
           preStop:
             exec:
-              command: ["sh", "-c", "rm -f /homework/conf/index.html"]
+              command: ["sh", "-c", "rm -f /usr/share/nginx/html/index.html"]
         readinessProbe:
           httpGet:
-            path: /conf/index.html
+            path: /index.html
             port: 80
           initialDelaySeconds: 5
           periodSeconds: 5
       volumes:
       - name: hw-volume
-        persistentVolumeClaim:
-          claimName: hw-pvc
-      - name: config-volume
-        configMap:
-          name: hw-config 
+        emptyDir: {}
       nodeSelector:
         homework: "true"
   strategy:
