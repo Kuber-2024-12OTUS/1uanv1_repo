@@ -13,13 +13,14 @@ spec:
       labels:
         app: homework
     spec:
+      serviceAccountName: monitoring  
       initContainers:
       - name: init-container
-        image: busybox
-        command: ['sh', '-c', 'mkdir -p /init/conf && echo "<h1>Hello, World!</h1>" > /init/conf/file.html']
+        image: curlimages/curl:latest  
+        command: ['sh', '-c', 'curl -k -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" https://kubernetes.default.svc.cluster.local/metrics -o /usr/share/nginx/html/metrics.html']  
         volumeMounts:
         - name: hw-volume
-          mountPath: /init
+          mountPath: /usr/share/nginx/html
       containers:
       - name: web-server
         image: nginx
@@ -27,28 +28,15 @@ spec:
         - containerPort: 80
         volumeMounts:
         - name: hw-volume
-          mountPath: /usr/share/nginx/html
-        - name: config-volume
-          mountPath: /homework/conf  
-        lifecycle:
-          preStop:
-            exec:
-              command: ["sh", "-c", "rm -f /homework/conf/index.html"]
-        readinessProbe:
-          httpGet:
-            path: /conf/index.html
-            port: 80
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          mountPath: /usr/share/nginx/html  
       volumes:
       - name: hw-volume
-        persistentVolumeClaim:
-          claimName: hw-pvc
-      - name: config-volume
-        configMap:
-          name: hw-config 
-      nodeSelector:
-        homework: "true"
+        emptyDir: {}
+      - name: kube-api-access
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: token  
   strategy:
     type: RollingUpdate
     rollingUpdate:

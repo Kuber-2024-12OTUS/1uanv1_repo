@@ -3,17 +3,22 @@ kind: Ingress
 metadata:
   name: hw-ingress
   namespace: homework
-  annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
   - host: homework.otus
     http:
       paths:
-      - path: /conf/(.*)
+      - path: /
         pathType: Prefix
         backend:
           service:
             name: hw-service
             port:
-              number: 80        
+              number: 80
+      - path: /metrics.html
+        pathType: Exact
+        backend:
+          service:
+            name: hw-service
+            port:
+              number: 80         

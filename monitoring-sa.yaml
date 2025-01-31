@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: monitoring
+  namespace: homework
+secrets:
+- name: monitoring-token  
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: homework
+  name: metrics-access
+rules:
+- apiGroups: [""]
+  resources: ["services/proxy"]
+  verbs: ["get"]
+  resourceNames: ["kubernetes"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: monitoring-rolebinding
+  namespace: homework
+subjects:
+- kind: ServiceAccount
+  name: monitoring
+  namespace: homework
+roleRef:
+  kind: Role
+  name: metrics-access
+  apiGroup: rbac.authorization.k8s.io
