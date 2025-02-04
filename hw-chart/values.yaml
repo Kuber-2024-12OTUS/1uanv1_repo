@@ -1,0 +1,41 @@
+namespace: homework
+appName: hw-deployment
+replicas: 3
+containerPort: 80
+servicePort: 80
+ingressHost: homework.otus
+ingressPath: /index.html
+
+image:
+  repository: nginx
+  tag: latest
+
+initContainer:
+  image: alpine
+  tag: latest
+  command: ["sh", "-c", 'echo "<h1>Hello, World!</h1>" > /init/index.html']
+  volumeMounts:
+    - name: hw-volume
+      mountPath: /init
+nodeSelector:
+  homework: "true"
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+mysql:
+  enabled: true
+  host: mysql
+  port: 3306
+  username: root
+  password: password
+
+ingress:
+  enabled: true
+  pathType: Exact
+
+rollingUpdate:
+  maxUnavailable: 1
+

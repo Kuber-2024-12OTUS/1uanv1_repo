@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appName }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      initContainers:
+        - name: init-container
+          image: {{ .Values.initContainer.image }}:{{ .Values.initContainer.tag }}
+          command: 
+            - "sh"
+            - "-c"
+            - "echo '<h1>Hello, World!</h1>' > /init/index.html"
+          volumeMounts:
+            - name: hw-volume
+              mountPath: /init
+      containers:
+        - name: web-server
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+          volumeMounts:
+            - name: hw-volume
+              mountPath: /usr/share/nginx/html
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "rm -f /usr/share/nginx/html/index.html"]
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: {{ .Values.containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 5
+      volumes:
+        - name: hw-volume
+          emptyDir: {}
+      nodeSelector:
+        homework: "true"
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+

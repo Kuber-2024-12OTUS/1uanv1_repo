@@ -1,0 +1,41 @@
+releases:
+  - name: kafka-prod
+    namespace: prod
+    chart: bitnami/kafka
+    version: 14.5.1
+    values:
+      - replicaCount: 5
+      - image:
+          tag: "3.5.2"
+      - auth:
+          enabled: true
+          sasl:
+            enabled: true
+            mechanism: PLAIN
+          protocol: SASL_PLAINTEXT
+      - persistence:
+          enabled: true
+          size: 8Gi
+      - zookeeper:
+          replicaCount: 3
+      - externalAccess:
+          enabled: false
+
+  - name: kafka-dev
+    namespace: dev
+    chart: bitnami/kafka
+    version: 14.5.1
+    values:
+      - replicaCount: 1
+      - image:
+          tag: "latest"
+      - auth:
+          enabled: false
+      - protocol: PLAINTEXT
+      - persistence:
+          enabled: false
+      - zookeeper:
+          replicaCount: 1
+      - externalAccess:
+          enabled: false
+
