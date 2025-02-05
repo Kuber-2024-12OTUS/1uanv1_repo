@@ -9,5 +9,5 @@ rules:
   - apiGroups: ["metrics.k8s.io"]
     resources: ["nodes", "pods", "metrics"]
     verbs: ["get", "list", "watch"]
-  - nonResourceURLs: ["/metrics"]  # Это правило обязательно
+  - nonResourceURLs: ["/metrics"]
     verbs: ["get"]
