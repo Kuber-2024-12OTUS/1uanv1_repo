@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  nginx.conf: |
+    events {}
+    http {
+        server {
+            listen 80;
+            location /stub_status {
+                stub_status;
+                allow all;
+            }
+        }
+    }
+
