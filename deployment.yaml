@@ -1,21 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-operator
-  namespace: default
+  name: nginx
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql-operator
+      app: nginx
   template:
     metadata:
       labels:
-        app: mysql-operator
+        app: nginx
     spec:
-      serviceAccountName: mysql-operator-sa
       containers:
-        - name: mysql-operator
-          image: roflmaoinmysoul/mysql-operator:1.0.0
-          imagePullPolicy: Always
-
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf  
+        - name: nginx-prometheus-exporter
+          image: nginx/nginx-prometheus-exporter:latest
+          args:
+            - "--nginx.scrape-uri=http://localhost:80/stub_status"
+          ports:
+            - containerPort: 9113    
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config     
