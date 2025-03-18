@@ -8,8 +8,8 @@ loki:
     s3:
       endpoint: storage.yandexcloud.net
       bucketnames: loki-logs-20250224
-      secretAccessKey: YCP3chtQrXCcEFIMBgwKg-YXQE1iq6kMHEvTowah
-      accessKeyId: YCAJEFwSrkCZpcVEOR3tLbDtu
+      secretAccessKey: <secret>
+      accessKeyId: <key>
   nodeSelector:
     node-role: infra
   tolerations:
