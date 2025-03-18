@@ -1,0 +1,35 @@
+test_pod:
+  enabled: false
+  
+loki:
+  auth_enabled: false
+  storage:
+    type: s3
+    s3:
+      endpoint: storage.yandexcloud.net
+      bucketnames: loki-logs-20250224
+      secretAccessKey: YCP3chtQrXCcEFIMBgwKg-YXQE1iq6kMHEvTowah
+      accessKeyId: YCAJEFwSrkCZpcVEOR3tLbDtu
+  nodeSelector:
+    node-role: infra
+  tolerations:
+    - key: "node-role"
+      operator: "Equal"
+      value: "infra"
+      effect: "NoSchedule"
+
+promtail:
+  enabled: true
+  tolerations:
+    - key: "node-role"
+      operator: "Exists"
+      effect: "NoSchedule"
+  config:
+    clients:
+      - url: http://loki:3100/loki/api/v1/push      
+
+filebeat:
+  enabled: false
+  
+logstash:
+  enabled: false  
