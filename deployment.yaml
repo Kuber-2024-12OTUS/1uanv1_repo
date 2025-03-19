@@ -13,6 +13,13 @@ spec:
       labels:
         app: homework
     spec:
+      tolerations:
+        - key: "node-role"
+          operator: "Equal"
+          value: "infra"
+          effect: "NoSchedule"
+      nodeSelector:
+        node-role: "infra"
       initContainers:
       - name: init-container
         image: busybox
@@ -41,8 +48,6 @@ spec:
       volumes:
       - name: hw-volume
         emptyDir: {}
-      nodeSelector:
-        homework: "true"
   strategy:
     type: RollingUpdate
     rollingUpdate:
