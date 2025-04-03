@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: csi-s3-pvc-dynamic
+  name: pvc-hw12
   namespace: default
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: csi-s3
+  storageClassName: sc-hw12
   resources:
     requests:
-      storage: 5Gi
+      storage: 1Gi
 
