@@ -1,8 +1,0 @@
-server:
-  nodeSelector:
-    node-role: infra
-  tolerations:
-  - key: "node-role"
-    operator: "Equal"
-    value: "infra"
-    effect: "NoSchedule"
